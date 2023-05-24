@@ -1,0 +1,61 @@
+---
+title: "Trabajo final"
+author: "Marta Muñoz Liébana"
+date: "2023-05-22"
+output: html_document
+---
+
+```
+```
+
+#Ejercicio 1. Importar la base de datos
+  Para importar la base de datos se ha de emplear el siguiente comando:
+  
+library(readxl)
+Base_de_datos_Baelo <- read_excel("C:/Trabajo final Estadística/Trab_fin/Base de datos Baelo.xlsx")
+View(Base_de_datos_Baelo)
+
+#Ejercicio 2. Renombrar algunas variables.
+  En este ejercicio voy a añadir algunas tildes que faltan.
+  
+names(Base_de_datos_Baelo)[names(Base_de_datos_Baelo) =="Cronologia"] <-"Cronología"
+names(Base_de_datos_Baelo)[names(Base_de_datos_Baelo)=="Localizacion"] <-"Localización"
+names(Base_de_datos_Baelo)[names(Base_de_datos_Baelo) =="Tipo de deposicion"] <-"Tipo de deposición"
+names(Base_de_datos_Baelo)[names(Base_de_datos_Baelo) =="¿Ceramica?"] <-"¿Cerámica?"
+
+#Ejercicio 3. Cambiar el valor de las variables
+  Aquí voy a cambiar aspectos como el tipo de enterramiento por los números 1 y 2, el tipo de estructura de individual o colectiva por 0 y 1, y el ajuar de si/no se va a cambiar a 3 y 4. Para ello se ha de utilizar el comando factor.
+  
+Base_de_datos_Baelo$`Tipo de enterramiento`<- factor(Base_de_datos_Baelo$`Tipo de enterramiento`, levels <- c("Inhumacion","Cremacion"), labels <- c("1","2"))
+Base_de_datos_Baelo$`Tipo de estructura`<-factor(Base_de_datos_Baelo$`Tipo de estructura`,levels<- c("Individual","Colectiva"), labels <- c("0","1"))
+Base_de_datos_Baelo$`¿Ajuar?`<-factor(Base_de_datos_Baelo$`¿Ajuar?`,levels<- c("Si","No"), labels <-c("3","4"))
+
+#Ejercicio 4. Crear vectores
+  Para realizar una regresión logística se han de crear vectores que funcionen como variables para esta.
+
+Num_cremaciones <-c(1,1,0,0,1,1)
+Num_inhumaciones <-c(0,1,1,1,0,1)
+Num_obj_ajuar <-c(3,2,4,6,1,0)
+
+#Ejercicio 5. Crear gráficos con los nuevos vectores
+  Una vez que se han creado estos vectores, vamos a realizar gráficos en los que se observen los valores de estos. Para ello vamos a utilizar el comando barplot.
+  
+Graf_inhumaciones=barplot(table(Num_inhumaciones))
+Graf_inhumaciones
+Graf_cremaciones=barplot(table(Num_cremaciones))
+Graf_cremaciones
+
+#Ejercicio 6. Crear una regresión logística
+  Vamos a realizar una regresión logística para analizar el tipo de tendencias en enterramientos que se dan en Baelo Claudia, Puerta Osario, el sector norte de Hispalis y la necrópolis de Prado San Sebastián. Para ello vamos a utilizar el comando glm, este sirve para ajustar el modelo de regresión.
+
+Regresión <-glm(Num_cremaciones ~ Num_inhumaciones, data = Base_de_datos_Baelo, family = binomial)
+
+#Ejercicio 7. Obtener el resumen del modelo
+  Mediante el uso del comando summary, podemos llegar a obtener información sobre los coeficientes que se encuentran en el modelo, las estadísticas de ajuste, los p-value, junto con los intervalos de confianza y las medidas de calidad de nuestro modelo.
+  
+summary(Regresión)
+
+#Ejercicio 8. Crear una predicción con los datos de la regresión
+  Con los datos que hemos obtenido de nuestro modelo de regresión se puede llegar a utilizar el comando predict para, como bien indica su nombre, llegar a predecir diferentes combinaciones que se pueden llegar a dar con nuestros valores.
+  
+predict(Regresión)
